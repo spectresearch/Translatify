@@ -1,0 +1,22 @@
+{
+    "extension_desc": {
+        "message": "It translates selected text and it displays translated text by notification pop-up.",
+        "description": "Extension description"
+    },
+    "max_gt_text_length": {
+        "message": "The length of your selected text must be less than 5000 chars.",
+        "description": "Max length accepted by Google Translate to translate"
+    },
+    "tt_start": {
+        "message": "Translation: ",
+        "description": "Text when a translation is displayed"
+    },
+    "enabled_title": {
+    	"message": "Click to disable translation",
+    	"description": "Title when the translation is enabled" 
+    },
+    "disabled_title": {
+    	"message": "Click to enable translation",
+    	"description": "Title when the translation is disabled" 
+    }
+}

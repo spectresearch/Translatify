@@ -1,0 +1,22 @@
+{
+    "extension_desc": {
+        "message": "Traduce el texto seleccionado y muestra el texto traducido mediante un pop-up de notificación.",
+        "description": "Descripción de la extensión"
+    },
+    "max_gt_text_length": {
+        "message": "El largo de tu texto seleccionado debe ser menor que 5000 caracteres.",
+        "description": "Largo máximo a traducir aceptado por Google Translate"
+    },
+    "tt_start": {
+        "message": "Traducción: ",
+        "description": "Texto cuando una traducción es mostrada."
+    },
+    "enabled_title": {
+    	"message": "Click para deshabilitar traducción",
+    	"description": "Título cuando la traducción esta habilitada." 
+    },
+    "disabled_title": {
+    	"message": "Click para habilitar traducción",
+    	"description": "Título cuando la traducción esta deshabilitada." 
+    }
+}
