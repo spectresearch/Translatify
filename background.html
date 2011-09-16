@@ -1,92 +1,100 @@
 <!DOCTYPE html>
 <html>
-    <head>
-    <meta charset="utf-8" />
-    <script src="media/jquery-1.6.2.js"></script>
-    <script>
-    	//Define Spanish as default language if it's not set
-    	if(!localStorage['lang']){
-        	localStorage['lang'] = 'es';
-        }
+<head>
+<meta charset="utf-8" />
+<script src="media/jquery-1.6.2.js"></script>
+<script>
+    //Define Spanish as default language by default
+    if (!localStorage['lang'])
+        localStorage['lang'] = 'es';
     
-        //Define status of the extension as enabled by default
-        if(!localStorage['status']){
-        	localStorage['status'] = 'enabled';
-        }
-		
-        /**
-         * Return translation from Google Translate
-         * @param {string} text Text to translate
- 		 * @return {string} Translated text
-         */
-        function getTranslationByGoogle(text) {
-        	
-        	var lang = localStorage['lang'];
-            var url = 'http://translate.google.com/translate_a/t';
-            var tt = '';
-
-            $.ajax({
-                url: url,
-                async: false,
-                data: {client: 't', sl: 'auto', tl: lang, text: text},
-                success: function(data) {
-                    var p = data.split(']]')[0];	//Get first array
-                    p = p.substr(4);	//Remove initial chars
-                    p = p.split('"],["');	//Split chunks of translation
-                    
-                    for (var i = 0; i < p.length; i++) {
-                    	//Concatenate translated parts
-                        tt += p[i].split('","')[0];	
-                    }
-                    
-                    tt = tt.replace(/\\"/gi, '"');	//Replace escaped quotes
+    //Define status of the extension as enabled by default
+    if (!localStorage['status'])
+        localStorage['status'] = 'enabled';
+    
+    //Define translation hotkey as disabled by default
+    if (!localStorage['hotkey'])
+        localStorage['hotkey'] = '';
+        
+    //Update icon if status is disabled
+    if (localStorage['status'] == 'disabled') {
+        chrome.browserAction.setTitle({
+            title: chrome.i18n.getMessage('disabled_title')
+        });
+        chrome.browserAction.setIcon(
+            {path:'media/icon-disabled.png'}
+        );
+    }
+    
+    /**
+     * Return translation from Google Translate
+     * @param {string} text Text to translate
+     * @return {string} Translated text
+     */
+    function getTranslationByGoogle(text) {
+        var lang = localStorage['lang'];
+        var url = 'http://translate.google.com/translate_a/t';
+        var tt = '';
+        
+        $.ajax({
+            url: url,
+            async: false,
+            data: {client: 't', sl: 'auto', tl: lang, text: text},
+            success: function(data) {
+                var p = data.split(']]')[0];	//Get first array
+                p = p.substr(4);	//Remove initial chars
+                p = p.split('"],["');	//Split chunks of translation
+                
+                for (var i = 0; i < p.length; i++) {
+                    //Concatenate translated parts
+                    tt += p[i].split('","')[0];	
                 }
-            });
-
-            return tt;
-        }
-
-        /*
-         * Reply to requests from content scripts
-         * @param {Object} request Object with request info
-         * @param {MessageSender} sender MessageSender object
-         * @param {function} sendResponse Function to send back information
-         */
-        function onRequest(request, sender, sendResponse) {
-			if (request.service == 'status') {
-				sendResponse({status: localStorage['status']});
-			}
-			else if (request.service == 'google') {
-                var translated_text = getTranslationByGoogle(request.text);
-                sendResponse({tt: translated_text});
+                
+                tt = tt.replace(/\\"/gi, '"');	//Replace escaped quotes
             }
-            else {    
-                sendResponse(false);
-            }
+        });
+        
+        return tt;
+    }
+    
+    /*
+     * Reply to requests from content scripts
+     * @param {Object} request Object with request info
+     * @param {MessageSender} sender MessageSender object
+     * @param {function} sendResponse Function to send back information
+     */
+    function onRequest(request, sender, sendResponse) {
+        if (request.service == 'hotkey')
+            sendResponse({hotkey: localStorage['hotkey']});
+        else if (request.service == 'status')
+            sendResponse({status: localStorage['status']});
+        else if (request.service == 'google') {
+            var translated_text = getTranslationByGoogle(request.text);
+            sendResponse({tt: translated_text});
         }
-
-        /**
-         * Enable or disable the extension when user click on the icon
-         */
-        function onClickIcon() {
-
-            var status = localStorage['status'];
-            localStorage['status'] = status == 'enabled' ?
-            	'disabled' : 'enabled';
-            	
-            chrome.browserAction.setTitle({
-            	title: chrome.i18n.getMessage(localStorage['status'] + '_title')
-            });
-            chrome.browserAction.setIcon(
-            	{path:'media/icon-' + localStorage['status'] + '.png'}
-            );
-        }
-
-		//Listeners for events
-        chrome.extension.onRequest.addListener(onRequest);
-        chrome.browserAction.onClicked.addListener(onClickIcon);
-    </script>
-    </head>
-    <body>
-    </body>
+        else
+            sendResponse(false);
+    }
+    
+    /**
+     * Enable or disable the extension when user click on the icon
+     */
+    function onClickIcon() {
+        var status = localStorage['status'];
+        localStorage['status'] = status == 'enabled' ? 'disabled' : 'enabled';
+        
+        chrome.browserAction.setTitle({
+            title: chrome.i18n.getMessage(localStorage['status'] + '_title')
+        });
+        chrome.browserAction.setIcon(
+            {path:'media/icon-' + localStorage['status'] + '.png'}
+        );
+    }
+    //Listeners for events
+    chrome.extension.onRequest.addListener(onRequest);
+    chrome.browserAction.onClicked.addListener(onClickIcon);
+</script>
+</head>
+<body>
+</body>
 <html>

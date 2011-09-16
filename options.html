@@ -1,134 +1,156 @@
 <!DOCTYPE html>
 <html>
-    <head>
-    <title>Translatify Options</title>
-    <meta charset="utf-8" />
-	<link href='http://fonts.googleapis.com/css?family=Gentium+Basic:400,700' rel='stylesheet' type='text/css'>
-	<script src='media/jquery-1.6.2.js'></script>
-
-	<style>
+<head>
+<title>Translatify Options</title>
+<meta charset="utf-8" />
+<link href='http://fonts.googleapis.com/css?family=Gentium+Basic:400,700' rel='stylesheet' type='text/css'>
+<script src='media/jquery-1.6.2.js'></script>
+<script src='media/hotkeys.js'></script>
+<style>
     body { font-family: 'Gentium Basic', serif; }
     div#content { text-align: center; margin:0 auto 0 auto; width:500px; }
     h1 { font-size: 70px; font-weight: bold; padding-top: 30px;}
     h2 { text-align: left; color: #4169E1;}
     p { text-align: left}
     #status {
-		border: 1px solid;
-		margin: 10px 0px;
-		padding:15px 10px 15px 50px;
-		color: #4F8A10;
-		background-color: #DFF2BF;
-		display: none;
-		-webkit-border-radius: 7px;
+        border: 1px solid;
+        margin: 10px 0px;
+        padding:15px 10px 15px 50px;
+        color: #4F8A10;
+        background-color: #DFF2BF;
+        display: none;
+        -webkit-border-radius: 7px;
     }
-    </style>
-    
-    <script>
-    /**
-     * Set default value in select field '#to_lang' to previously chosen value
-     * by user
-     */
+</style>
+<script>
+    //Document ready
     $(function() {
-	    $('#to_lang').val(localStorage['lang']);
-	});
-	
-	/**
-	 * Save chosen language by user
-	 */
-    function save_options() {
-    	  var select = document.getElementById('to_lang');
-    	  var lang = select.children[select.selectedIndex].value;
-    	  localStorage['lang'] = lang;
-
-    	  // Update status to let user know options were saved.
-    	  $('#status').text('Options saved.');
-    	  $('#status').slideDown(400);
-    	  $('#status').delay(2000).slideUp(1000);
-    }
-    </script>
-    </head>
+        //Set initial value for selection of language
+        $('#to_lang').val(localStorage['lang']);
+        
+        //Set initial values for hotkey section
+        if (localStorage['hotkey'] == '') {
+            $('[name=hk_status]').filter('[value="disabled"]').attr('checked','checked');
+            $('#hotkey').hide();
+        }
+        else {
+            $('[name=hk_status]').filter('[value="enabled"]').attr('checked','checked');
+            $('#hotkey').val(localStorage['hotkey']);
+            $('#hotkey').show();
+        }
+        
+        //Handle click on hotkey section
+        $('[name=hk_status]').click(function() {
+            if ($(this).val() == 'enabled' && this.checked) {
+                $('#hotkey').val(localStorage['hotkey']);
+                $('#hotkey').show();
+            }
+            else {
+                $('#hotkey').hide();
+                localStorage['hotkey'] = '';
+            } 
+        });
+         
+        //Set up function for hotkey input
+        $('#hotkey').keydown(function(e) {
+            var special = jQuery.hotkeys.specialKeys[e.which];
+            var c = String.fromCharCode(e.which);
+            var hotkey = '';
+            
+            if (e.altKey && special != 'alt')
+                hotkey += 'Alt+'; 
+            if (e.ctrlKey && special != 'ctrl')
+                hotkey += 'Ctrl+';
+            if (e.shiftKey && special != 'shift')
+                hotkey += 'Shift+';
+            
+            if (special) {
+                localStorage['hotkey'] = hotkey + special;
+                $('#hotkey').val(localStorage['hotkey']);
+            }
+            else {
+                localStorage['hotkey'] = hotkey + c.toLowerCase();
+                $('#hotkey').val(localStorage['hotkey']);
+            } 
+        });
+        
+    });
     
-    <body>
+    /**
+     * Save chosen language by user
+     */
+    function save_options() {
+        var select = document.getElementById('to_lang');
+        var lang = select.children[select.selectedIndex].value;
+        localStorage['lang'] = lang;
+        
+        // Update status to let user know options were saved.
+        $('#status').text('Options saved.');
+        $('#status').slideDown(400);
+        $('#status').delay(2000).slideUp(1000);
+    }
+</script>
+</head>
+<body>
     <div id="content">
-	    <img src="media/icon128.png" style="float:left;" />
-	    <h1>Translatify</h1>
-	    
-	    <p>All selected text in web pages will be translated to the chosen 
-	    language. Select the language, please:
-		    <select id="to_lang" name="to_lang">
-		    	<option value=af>Afrikaans</option>
-		    	<option value=sq>Albanian</option>
-		    	<option value=ar>Arabic</option>
-		    	<option value=hy>Armenian</option>
-		    	<option value=az>Azerbaijani</option>
-		    	<option value=eu>Basque</option>
-		    	<option value=be>Belarusian</option>
-		    	<option value=bn>Bengali</option>
-		    	<option value=bg>Bulgarian</option>
-		    	<option value=ca>Catalan</option>
-		    	<option value=zh-CN>Chinese</option>
-		    	<option value=hr>Croatian</option>
-		    	<option value=cs>Czech</option>
-		    	<option value=da>Danish</option>
-		    	<option value=nl>Dutch</option>
-		    	<option value=en>English</option>
-		    	<option value=et>Estonian</option>
-		    	<option value=tl>Filipino</option>
-		    	<option value=fi>Finnish</option>
-		    	<option value=fr>French</option>
-		    	<option value=gl>Galician</option>
-		    	<option value=ka>Georgian</option>
-		    	<option value=de>German</option>
-		    	<option value=el>Greek</option>
-		    	<option value=gu>Gujarati</option>
-		    	<option value=ht>Haitian Creole</option>
-		    	<option value=iw>Hebrew</option>
-		    	<option value=hi>Hindi</option>
-		    	<option value=hu>Hungarian</option>
-		    	<option value=is>Icelandic</option>
-		    	<option value=id>Indonesian</option>
-		    	<option value=ga>Irish</option>
-		    	<option value=it>Italian</option>
-		    	<option value=ja>Japanese</option>
-		    	<option value=kn>Kannada</option>
-		    	<option value=ko>Korean</option>
-		    	<option value=la>Latin</option>
-		    	<option value=lv>Latvian</option>
-		    	<option value=lt>Lithuanian</option>
-		    	<option value=mk>Macedonian</option>
-		    	<option value=ms>Malay</option>
-		    	<option value=mt>Maltese</option>
-		    	<option value=no>Norwegian</option>
-		    	<option value=fa>Persian</option>
-		    	<option value=pl>Polish</option>
-		    	<option value=pt>Portuguese</option>
-		    	<option value=ro>Romanian</option>
-		    	<option value=ru>Russian</option>
-		    	<option value=sr>Serbian</option>
-		    	<option value=sk>Slovak</option>
-		    	<option value=sl>Slovenian</option>
-		    	<option value=es>Spanish</option>
-		    	<option value=sw>Swahili</option>
-		    	<option value=sv>Swedish</option>
-		    	<option value=ta>Tamil</option>
-		    	<option value=te>Telugu</option>
-		    	<option value=th>Thai</option>
-		    	<option value=tr>Turkish</option>
-		    	<option value=uk>Ukrainian</option>
-		    	<option value=ur>Urdu</option>
-		    	<option value=vi>Vietnamese</option>
-		    	<option value=cy>Welsh</option>
-		    	<option value=yi>Yiddish</option>
-		    </select>
-	    	<button onclick="save_options()">Save</button>
-	    </p>
-	    <div id="status"></div><br>
-	    
-	    <h2>Enabling/Disabling the translation.</h2>
-	    <p>By default, the translation is enabled. If you want to temporarily
-	    disable it, click on the icon of Translatify next to the address bar 
-	    (the icon changes to black/white colors). If you want to enable it,
-	    click on the icon again.</p>
+        <img src="media/icon128.png" style="float:left;" />
+        <h1>Translatify</h1>
+        <p>All selected text in web pages will be translated to the chosen 
+        language. Select the language, please:
+        
+        <select id="to_lang" name="to_lang">
+            <option value=af>Afrikaans</option><option value=sq>Albanian</option>
+            <option value=ar>Arabic</option><option value=hy>Armenian</option>
+            <option value=az>Azerbaijani</option><option value=eu>Basque</option>
+            <option value=be>Belarusian</option><option value=bn>Bengali</option>
+            <option value=bg>Bulgarian</option><option value=ca>Catalan</option>
+            <option value=zh-CN>Chinese</option><option value=hr>Croatian</option>
+            <option value=cs>Czech</option><option value=da>Danish</option>
+            <option value=nl>Dutch</option><option value=en>English</option>
+            <option value=et>Estonian</option><option value=tl>Filipino</option>
+            <option value=fi>Finnish</option><option value=fr>French</option>
+            <option value=gl>Galician</option><option value=ka>Georgian</option>
+            <option value=de>German</option><option value=el>Greek</option>
+            <option value=gu>Gujarati</option><option value=ht>Haitian Creole</option>
+            <option value=iw>Hebrew</option><option value=hi>Hindi</option>
+            <option value=hu>Hungarian</option><option value=is>Icelandic</option>
+            <option value=id>Indonesian</option><option value=ga>Irish</option>
+            <option value=it>Italian</option><option value=ja>Japanese</option>
+            <option value=kn>Kannada</option><option value=ko>Korean</option>
+            <option value=la>Latin</option><option value=lv>Latvian</option>
+            <option value=lt>Lithuanian</option><option value=mk>Macedonian</option>
+            <option value=ms>Malay</option><option value=mt>Maltese</option>
+            <option value=no>Norwegian</option><option value=fa>Persian</option>
+            <option value=pl>Polish</option><option value=pt>Portuguese</option>
+            <option value=ro>Romanian</option><option value=ru>Russian</option>
+            <option value=sr>Serbian</option><option value=sk>Slovak</option>
+            <option value=sl>Slovenian</option><option value=es>Spanish</option>
+            <option value=sw>Swahili</option><option value=sv>Swedish</option>
+            <option value=ta>Tamil</option><option value=te>Telugu</option>
+            <option value=th>Thai</option><option value=tr>Turkish</option>
+            <option value=uk>Ukrainian</option><option value=ur>Urdu</option>
+            <option value=vi>Vietnamese</option><option value=cy>Welsh</option>
+            <option value=yi>Yiddish</option>
+        </select>
+        <button onclick="save_options()">Save</button>
+        </p>
+        
+        <div id="status"></div><br>
+        
+        <h2>Hotkey for translation</h2>
+        <p>Translatify automatically translates every selected text. You can 
+        establish a hotkey, so when you select the text, only if you press
+        the hotkey, the text is translated. </p>
+        
+            <p>	<input type="radio" name="hk_status" value="disabled"> Disabled</p>
+            <p>	<input type="radio" name="hk_status" value="enabled"> Enabled 
+            <input id="hotkey" placeholder="(Ctrl|Shift|Alt + key)">
+            
+        <h2>Enabling/Disabling the translation.</h2>
+        <p>By default, the translation is enabled. If you want to temporarily
+        disable it, click on the icon of Translatify next to the address bar 
+        (the icon changes to black/white colors). If you want to enable it,
+        click on the icon again.</p>
     
     </div>
     </body>
