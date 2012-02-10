@@ -1,6 +1,6 @@
 {
     "extension_desc": {
-        "message": "It translates selected text and it displays translated text by notification pop-up.",
+        "message": "It translates selected text and displays translated text by notification pop-up.",
         "description": "Extension description"
     },
     "max_gt_text_length": {
